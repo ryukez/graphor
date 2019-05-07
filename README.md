@@ -1,5 +1,5 @@
 # graphor
-Golang Object-Relational mapper for dgraph, inspired by Laravel-Eloquent (https://readouble.com/laravel/5.7/ja/eloquent.html).
+Golang Object-Relational mapper for dgraph (https://dgraph.io/), inspired by Laravel-Eloquent (https://readouble.com/laravel/5.7/ja/eloquent.html).
 
 ## Dependency
 - dgraph-io/dgo (https://github.com/dgraph-io/dgo)
@@ -118,7 +118,7 @@ func UserSchema() graphor.Schema {
 ```
 
 #### Tag
-A number to identify model type. You can assign arbitary integer, but shouldn't duplicate between distinct models.
+A number to identify model type. You can assign arbitary integer, but numbers shouldn't duplicate between distinct models.
 
 #### Fields
 Properties which will be saved in dgraph database. Don't include following properties:
@@ -129,7 +129,7 @@ Properties which will be saved in dgraph database. Don't include following prope
 - relation counts (e.g. `follow_count`, `follower_count`)
 
 #### Booleans
-Boolean flags which indicates whether filter condition for relation holds or not. Filter should be described in GraphQL+-. See details for GraphQL+- in https://docs.dgraph.io/master/query-language/.
+Boolean flags for relation which indicates whether filter condition holds or not. Filter should be described in GraphQL+-. See details for GraphQL+- in https://docs.dgraph.io/master/query-language/.
 
 For example, boolean in above example
 
@@ -402,7 +402,7 @@ func Examples() {
 ```
 
 ### Raw Query
-You can also write raw query language by using `graphor.BuildRawQuery()`.
+You can also write raw query language by using `graphor.BuildRawQuery(q string, schema graphor.Schema, args map[string]interface{})`.
 
 ```golang
 func GetFollows(self *User) ([]*User, err) {
@@ -430,7 +430,7 @@ You can embed some variables by `#{variable}` notation. There are some pre-defin
 - sorting, take: sorting key & order, take count which is set by `SetSortOption()`, `Take()`
 - body: auto-generated body according to `schema`
 
-Utilizing these variables, you can combine your own complicated query with query builder functions.
+Utilizing these variables, you can combine your own complicated query with builder functions.
 
 ## Help
 If you have problems, please feel free to contact.
