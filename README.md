@@ -9,7 +9,16 @@ Golang Object-Relational mapper for dgraph (https://dgraph.io/), inspired by Lar
 `go get github.com/nosukeru/graphor`
 
 ## Usage
-### 1. Define your domain model
+### 1. Initialize graphor
+
+```golang
+err := graphor.InitializeGraphor()
+if err != nil {
+	return nil, err
+}
+```
+
+### 2. Define your domain model
 
 ```golang
 type ImageModel struct {
@@ -32,7 +41,7 @@ type UserModel struct {
 }
 ```
 
-### 2. Define graphor model & schema
+### 3. Define graphor model & schema
 
 By embedding `graphor.ModelProperty`, you can use your model as graphor model.
 
@@ -154,7 +163,7 @@ Relations which wrap edges in dgraph database. You should relation features in m
 - Facets(map[string]Facet): facet list for relation. `Facet` is a struct which has only `Edge` property at this time. Map key is an arbitary name and Facet.Edge is facet name in dgraph database.
 - SchemaFunc: relation model schema function (function which returns `Schema` with no arguments) (e.g. `UserSchema`)
 
-### 3. Add some utility methods
+### 4. Add some utility methods
 
 ```golang
 // ----- Image -----
@@ -245,7 +254,7 @@ func (user *User) HasFollowers() graphor.Relation {
 }
 ```
 
-### 4. Alter dgraph schema
+### 5. Alter dgraph schema
 
 ```golang
 func Alter() error {
