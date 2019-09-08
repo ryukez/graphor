@@ -56,7 +56,7 @@ func (schema Schema) Build() string {
 
 	for name, r := range schema.Relations {
 		if r.CountField != "" {
-			edges = append(edges, fmt.Sprintf("%s: count(%s)", r.CountField, r.Edge))
+			edges = append(edges, fmt.Sprintf("%s: count(%s) @filter(not has(deleted_at))", r.CountField, r.Edge))
 		}
 
 		if r.Include {
