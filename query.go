@@ -20,6 +20,7 @@ type Query interface {
 	Regex(field, regex string) Query
 	Scope(filter func(q Query) Query) Query
 	Identify(uids ...string) Query
+	Debug() Query
 	Execute() ([]interface{}, error)
 	First() (QueryData, error)
 	All() ([]QueryData, error)
@@ -37,6 +38,7 @@ type query struct {
 	SortOrder      string
 	TakeCount      int
 	OnlyNotDeleted bool
+	IsDebug        bool
 	Schema         Schema
 }
 
@@ -137,6 +139,11 @@ func (q *query) Identify(uids ...string) Query {
 	return q
 }
 
+func (q *query) Debug() Query {
+	q.IsDebug = true
+	return q
+}
+
 func (q *query) generate() string {
 	query := q.Base
 	for name, value := range q.Args {
@@ -152,6 +159,10 @@ func (q *query) generate() string {
 		}
 
 		query = strings.Replace(query, fmt.Sprintf("#{%s}", name), s, -1)
+	}
+
+	if q.IsDebug {
+		print(query)
 	}
 
 	return query

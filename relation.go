@@ -78,6 +78,10 @@ func (r *relation) Where(field string, op string, value interface{}) Query {
 	return r
 }
 
+func (r *relation) Between(field string, left interface{}, right interface{}) Query {
+	return r.Where(field, "ge", left).Where(field, "lt", right)
+}
+
 func (r *relation) Has(edge string) Query {
 	r.query.Has(edge)
 	return r
@@ -108,8 +112,9 @@ func (r *relation) Identify(uids ...string) Query {
 	return r
 }
 
-func (r *relation) Between(field string, left interface{}, right interface{}) Query {
-	return r.Where(field, "ge", left).Where(field, "lt", right)
+func (r *relation) Debug() Query {
+	r.query.Debug()
+	return r
 }
 
 func (r *relation) Execute() ([]interface{}, error) {
