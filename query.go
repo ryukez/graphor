@@ -13,6 +13,7 @@ type Query interface {
 	GetSortKey() string
 	Take(take int) Query
 	Where(field string, op string, value interface{}) Query
+	Between(field string, left interface{}, right interface{}) Query
 	Has(edge string) Query
 	HasNot(edge string) Query
 	Or(filters ...(func(q Query) Query)) Query
@@ -87,6 +88,10 @@ func (q *query) Take(count int) Query {
 func (q *query) Where(field string, op string, value interface{}) Query {
 	q.Filters = append(q.Filters, fmt.Sprintf("%s(%s, %s)", op, field, eval(value)))
 	return q
+}
+
+func (q *query) Between(field string, left interface{}, right interface{}) Query {
+	return q.Where(field, "ge", left).Where(field, "lt", right)
 }
 
 func (q *query) Has(edge string) Query {

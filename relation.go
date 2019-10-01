@@ -108,6 +108,10 @@ func (r *relation) Identify(uids ...string) Query {
 	return r
 }
 
+func (r *relation) Between(field string, left interface{}, right interface{}) Query {
+	return r.Where(field, "ge", left).Where(field, "lt", right)
+}
+
 func (r *relation) Execute() ([]interface{}, error) {
 	facets := []string{}
 
