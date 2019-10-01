@@ -35,8 +35,20 @@ func EmptySchema() Schema {
 	return Schema{}
 }
 
+func CountSchema(tag int) Schema {
+	return Schema{
+		Tag:       tag,
+		Fields:    []string{"count(uid)"},
+		Booleans:  map[string]Boolean{},
+		Relations: map[string]RelationSchema{},
+	}
+}
+
 func (schema Schema) Build() string {
-	edges := append(schema.Fields, "uid", "created_at", "updated_at", "deleted_at")
+	edges := schema.Fields
+	if len(edges) == 0 || edges[0] != "count(uid)" {
+		edges = append(edges, "uid", "created_at", "updated_at", "deleted_at")
+	}
 
 	for name, b := range schema.Booleans {
 		filter := b.Filter

@@ -25,6 +25,7 @@ type Query interface {
 	Get(interface{}) error
 	Paging(since interface{}, until interface{}, count int) Query
 	Exists() (bool, error)
+	Count() (int, error)
 }
 
 type query struct {
@@ -33,7 +34,7 @@ type query struct {
 	Filters        []string
 	SortKey        string
 	SortOrder      string
-	Count          int
+	TakeCount      int
 	OnlyNotDeleted bool
 	Schema         Schema
 }
@@ -45,7 +46,7 @@ func build(qStr string, schema Schema, args map[string]interface{}) *query {
 	q.Filters = []string{}
 	q.SortKey = "created_at"
 	q.SortOrder = "desc"
-	q.Count = 0
+	q.TakeCount = 0
 	q.Schema = schema
 
 	return q
@@ -79,7 +80,7 @@ func (q *query) GetSortKey() string {
 }
 
 func (q *query) Take(count int) Query {
-	q.Count = count
+	q.TakeCount = count
 	return q
 }
 
@@ -163,8 +164,8 @@ func (q *query) Execute() ([]interface{}, error) {
 	}
 
 	if !keyExists(args, "take") {
-		if q.Count > 0 {
-			args["take"] = fmt.Sprintf(", first: %d", q.Count)
+		if q.TakeCount > 0 {
+			args["take"] = fmt.Sprintf(", first: %d", q.TakeCount)
 		} else {
 			args["take"] = ""
 		}
@@ -237,4 +238,20 @@ func (q *query) Paging(since interface{}, until interface{}, count int) Query {
 func (q *query) Exists() (bool, error) {
 	data, err := q.Take(1).All()
 	return len(data) > 0, err
+}
+
+func (q *query) Count() (int, error) {
+	q.Schema = CountSchema(q.Schema.Tag)
+
+	type Data struct {
+		Count int
+	}
+
+	data := []Data{}
+	err := q.Get(&data)
+	if err != nil {
+		return 0, err
+	}
+
+	return data[0].Count, err
 }

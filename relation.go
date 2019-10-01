@@ -134,8 +134,8 @@ func (r *relation) Execute() ([]interface{}, error) {
 		r.query.Args["facets_filter"] = ""
 	}
 
-	if r.Count > 0 {
-		r.Args["take"] = fmt.Sprintf("(first: %d)", r.Count)
+	if r.TakeCount > 0 {
+		r.Args["take"] = fmt.Sprintf("(first: %d)", r.TakeCount)
 	}
 
 	return r.query.Execute()
@@ -203,6 +203,10 @@ func (r *relation) Paging(since interface{}, until interface{}, count int) Query
 func (r *relation) Exists() (bool, error) {
 	dataList, err := r.Take(1).All()
 	return len(dataList) > 0, err
+}
+
+func (r *relation) Count() (int, error) {
+	return r.query.Count()
 }
 
 func (r *relation) add(child Model, facets ...map[string]interface{}) {
